@@ -93,6 +93,8 @@ Item {
     property string weatherUnit: "metric"
     property string weatherApiKey: ""
     property string weatherCityId: ""
+    property bool weatherAutoUpdate: true
+    property int weatherUpdateInterval: 15
 
     property var keybindsData: []
     signal keybindsLoaded()
@@ -127,7 +129,9 @@ Item {
         let envs = {
             "OPENWEATHER_KEY": config.weatherApiKey,
             "OPENWEATHER_CITY_ID": config.weatherCityId,
-            "OPENWEATHER_UNIT": config.weatherUnit
+            "OPENWEATHER_UNIT": config.weatherUnit,
+            "OPENWEATHER_AUTO_UPDATE": config.weatherAutoUpdate.toString(),
+            "OPENWEATHER_UPDATE_INTERVAL": config.weatherUpdateInterval.toString()
         };
         
         config.updateEnvBulk(config.weatherEnvPath, envs);
@@ -351,6 +355,8 @@ Item {
                         if (key === "OPENWEATHER_KEY") config.weatherApiKey = val;
                         else if (key === "OPENWEATHER_CITY_ID") config.weatherCityId = val;
                         else if (key === "OPENWEATHER_UNIT") config.weatherUnit = val;
+                        else if (key === "OPENWEATHER_AUTO_UPDATE") config.weatherAutoUpdate = (val === "true");
+                        else if (key === "OPENWEATHER_UPDATE_INTERVAL") config.weatherUpdateInterval = parseInt(val) || 15;
                     }
                 }
             }
