@@ -11,6 +11,12 @@ import "../"
 Item {
     id: window
     width: Screen.width
+    focus: true
+
+    Keys.onEscapePressed: {
+        Quickshell.execDetached(["bash", Quickshell.env("HOME") + "/.config/hypr/scripts/qs_manager.sh", "close"]);
+        event.accepted = true;
+    }
 
     Caching { id: paths }
 
