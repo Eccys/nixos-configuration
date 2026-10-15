@@ -39,15 +39,9 @@ Item {
     }
 
     function setSetting(key, value) {
-        rawSettings[key] = value;
-        let safeValue = typeof value === "string" ? `"${value}"` : value;
-        if (typeof value === "object") safeValue = JSON.stringify(value).replace(/'/g, "'\\''");
-
-        let cmd = `mkdir -p "$(dirname '${settingsJsonPath}')" && ` +
-                  `[ ! -f '${settingsJsonPath}' ] && echo '{}' > '${settingsJsonPath}'; ` +
-                  `jq '. + {"${key}": ${safeValue}}' '${settingsJsonPath}' > '${settingsJsonPath}.tmp' && ` +
-                  `mv '${settingsJsonPath}.tmp' '${settingsJsonPath}'`;
-        sh(cmd);
+        let patch = {};
+        patch[key] = value;
+        updateJsonBulk(patch);
     }
 
     function updateJsonBulk(dataObj) {
