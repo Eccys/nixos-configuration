@@ -29,6 +29,9 @@ ID="$OPENWEATHER_CITY_ID"
 UNIT="${OPENWEATHER_UNIT:-metric}" # Default to metric if not set
 AUTO_UPDATE="${OPENWEATHER_AUTO_UPDATE:-true}"
 INTERVAL_MINS="${OPENWEATHER_UPDATE_INTERVAL:-15}"
+if ! [[ "$INTERVAL_MINS" =~ ^[0-9]+$ ]] || [ "$INTERVAL_MINS" -lt 1 ]; then
+    INTERVAL_MINS=15
+fi
 
 # Determine temperature symbol based on unit
 case "$UNIT" in

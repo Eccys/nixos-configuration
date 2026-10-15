@@ -11,7 +11,7 @@ INPUT_VAL="$1"
 RESOLVED_TEXT=""
 case "$INPUT_VAL" in
     [a-zA-Z_][a-zA-Z0-9_]*)
-        eval RESOLVED_TEXT=\$$INPUT_VAL
+        RESOLVED_TEXT="${!INPUT_VAL}"
         ;;
 esac
 
@@ -29,15 +29,20 @@ fi
 # Backup current clipboard
 OLD_CLIP=$(wl-paste -n 2>/dev/null)
 
-# Copy new text
-echo -n "$TEXT" | wl-copy
+# Copy new text safely (printf avoids echo flag parsing on strings starting with -n/-e)
+printf '%s' "$TEXT" | wl-copy
 
 # Paste using Hyprland's sendshortcut dispatcher targeting the active window
 hyprctl dispatch sendshortcut "CTRL,v,activewindow"
 
-# Restore old clipboard contents
+# Allow the active Wayland client to read the pasted buffer before restoring clipboard
+sleep 0.05
+
+# Restore old clipboard contents (or clear if clipboard was previously empty)
 if [ -n "$OLD_CLIP" ]; then
-    echo -n "$OLD_CLIP" | wl-copy
+    printf '%s' "$OLD_CLIP" | wl-copy
+else
+    wl-copy --clear 2>/dev/null || true
 fi
 
 # Remove the temporary macro text from cliphist history to keep clipboard history clean
